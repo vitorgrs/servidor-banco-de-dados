@@ -24,7 +24,8 @@ app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
   console.log(denuncia)
 
-  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id';  const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
+  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id';  
+  const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
 
   try {
     const result = await client.query(query, values);
