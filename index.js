@@ -30,6 +30,7 @@ app.post('/inserirResposta', async (req, res) => {
   try {
     const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].id;
+    res.status(200).json({ id: idDaDenuncia });
     console.log('Resposta inserida com sucesso:', result);
     console.log('Resposta inserida com sucesso. ID da denúncia:', idDaDenuncia);
     res.status(200).send('Resposta inserida com sucesso');
