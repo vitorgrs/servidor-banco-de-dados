@@ -56,8 +56,12 @@ app.get('/obterDenuncia/:id', async (req, res) => {
     const result = await client.query(query, values);
     const denuncia = result.rows[0];
 
-    // Renderiza a página feedback.html com os dados da denúncia
-    res.render('feedback', { denuncia });
+    if (denuncia) {
+      // Retorna o JSON diretamente
+      res.status(200).json(denuncia);
+    } else {
+      res.status(404).send('Denúncia não encontrada');
+    }
   } catch (error) {
     console.error('Erro ao buscar dados da denúncia:', error);
     res.status(500).send('Erro ao buscar dados da denúncia');
