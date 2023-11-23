@@ -39,7 +39,7 @@ app.post('/inserirResposta', async (req, res) => {
     res.status(500).send('Erro ao inserir resposta');
   }
 });
-
+/*
 aapp.set('view engine', 'ejs'); // ou o motor de template que você está usando
 app.set('views', path.join(__dirname, 'views')); // certifique-se de ajustar o caminho
 
@@ -60,7 +60,7 @@ app.get('/denuncias/:id', async (req, res) => {
     res.status(500).send('Erro ao buscar dados da denúncia');
   }
 });
-
+*/
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor está ouvindo na porta ${PORT}`);
