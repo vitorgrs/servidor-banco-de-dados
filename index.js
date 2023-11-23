@@ -43,7 +43,7 @@ app.post('/inserirResposta', async (req, res) => {
 
 app.get('/feedback/:id', (req, res) => {
   const protocolo = req.params.id;
-  const filePath = path.join(__dirname,'scr', 'feedback.html');  
+  const filePath = path.join( 'feedback.html');  
   res.sendFile(filePath);
 });
 
