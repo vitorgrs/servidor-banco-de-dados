@@ -18,7 +18,13 @@ const client = new Client({
     port: 59355,
 });
 
-client.connect().catch((eror) => console.log(eror))
+try {
+  await client.connect();
+  console.log('Conexão bem-sucedida ao banco de dados');
+} catch (error) {
+  console.error('Erro ao conectar ao banco de dados:', error);
+  // Terminar o aplicativo ou tomar medidas apropriadas
+}
 
 
 app.post('/inserirResposta', async (req, res) => {
@@ -69,6 +75,16 @@ app.get('/obterDenuncia/:id', async (req, res) => {
   }
 });
 
+process.on('SIGINT', async () => {
+  try {
+    await client.end();
+    console.log('Conexão com o banco de dados encerrada');
+    process.exit(0);
+  } catch (err) {
+    console.error('Erro ao encerrar a conexão com o banco de dados:', err);
+    process.exit(1);
+  }
+});
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor está ouvindo na porta ${PORT}`);
