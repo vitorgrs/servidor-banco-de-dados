@@ -47,7 +47,7 @@ app.get('/feedback/:id', (req, res) => {
 });
 
 // Rota para obter os detalhes da denúncia com base no ID
-app.get('/denuncias/:id', async (req, res) => {
+app.get('/obterDenuncia/:id', async (req, res) => {
   const idDaDenuncia = req.params.id;
   const query = 'SELECT * FROM denuncias WHERE id = $1';
   const values = [idDaDenuncia];
