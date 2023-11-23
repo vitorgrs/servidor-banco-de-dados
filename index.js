@@ -40,7 +40,11 @@ app.post('/inserirResposta', async (req, res) => {
   }
 });
 
-
+app.get('/feedback/:id', (req, res) => {
+  // Rota para renderizar a página feedback.html
+  const idDaDenuncia = req.params.id;
+  res.sendFile(__dirname + '/scr/feedback.html');
+});
 
 // Rota para obter os detalhes da denúncia com base no ID
 app.get('/denuncias/:id', async (req, res) => {
