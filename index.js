@@ -3,6 +3,7 @@ const { Client } = require('pg');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const path = require('path');
 
 // Configuração do CORS
 app.use(cors());
@@ -41,9 +42,9 @@ app.post('/inserirResposta', async (req, res) => {
 });
 
 app.get('/feedback/:id', (req, res) => {
-  // Rota para renderizar a página feedback.html
   const idDaDenuncia = req.params.id;
-  res.sendFile(__dirname + '/scr/feedback.html');
+  const filePath = path.join(__dirname, 'scr', 'feedback.html');
+  res.sendFile(filePath);
 });
 
 // Rota para obter os detalhes da denúncia com base no ID
