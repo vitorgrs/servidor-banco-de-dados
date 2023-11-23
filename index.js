@@ -42,8 +42,9 @@ app.post('/inserirResposta', async (req, res) => {
 });
 
 app.get('/feedback/:id', (req, res) => {
-  const idDaDenuncia = req.params.id;
-  const filePath = path.join(__dirname, 'feedback.html');  res.sendFile(filePath);
+  const protocolo = req.params.id;
+  const filePath = path.join(__dirname, 'feedback.html');  
+  res.sendFile(filePath);
 });
 
 // Rota para obter os detalhes da denúncia com base no ID
