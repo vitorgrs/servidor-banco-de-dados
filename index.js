@@ -51,12 +51,12 @@ app.post('/inserirResposta', async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error('Erro ao enviar e-mail:', error);
+        res.status(500).send('Erro ao enviar e-mail');
       } else {
         console.log('E-mail enviado:', info.response);
+        res.status(200).json({ id: idDaDenuncia });
       }
     });
-
-
 
 
 
