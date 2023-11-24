@@ -41,13 +41,32 @@ app.post('/inserirResposta', async (req, res) => {
     const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].id;
     const tipodenuncia = result.rows[0].tipo_de_denuncia;
+    const data= result.rows[0].data_do_ocorrido;
+    const ralato = result.rows[0].relato;
+    const logradouro =result.rows[0].logradouro;
+    const complemento= result.rows[0].complemento;
+    const cidade = result.rows[0].cidade;
+    const bairro = result.rows[0].bairro;
+    const descricao = result.rows[0].descricao_do_local;
+    const contato = result.rows[0].contato;
 
      // Envio de e-mail
     const mailOptions = {
       from: 'eco.guardslz@gmail.com',
-      to: 'patrickaraujo2067@gmail.com',
-      subject: 'Nova resposta de denúncia',
-      text: `Nova resposta de denúncia. ID da denúncia: ${idDaDenuncia}, sobre: ${tipodenuncia}`,
+      to: 'gamervitor28@gmail.com',
+      subject: 'Denúncia realizada através do site ecoguard',
+      text: `
+        Denúncia realizada:
+        Sobre: ${tipodenuncia}
+        Data do ocorrido: ${data}
+        Relato: ${relato}
+        Logradouro: ${logradouro}
+        Complemento: ${complemento}
+        Cidade: ${cidade}
+        Bairro: ${bairro}
+        Descrição do local: ${descricao}
+        Contato: ${contato}
+     `,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
