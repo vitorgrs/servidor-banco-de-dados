@@ -24,10 +24,10 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'eco.guardslz@gmail.com',
-    pass: 'ecoguard0000',
+    pass: 'xovv ekaf cobv otgt', // Use a senha de aplicativo aqui
   },
-  secure: true,
 });
+
 
 
 
