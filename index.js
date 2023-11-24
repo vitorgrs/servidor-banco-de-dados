@@ -23,7 +23,6 @@ client.connect().catch((eror) => console.log(eror))
 
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
-  console.log(denuncia)
 
   const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id';  
   const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
@@ -31,15 +30,14 @@ app.post('/inserirResposta', async (req, res) => {
   try {
     const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].id;
-    res.status(200).json({ id: idDaDenuncia });
-    console.log('Resposta inserida com sucesso:', result);
     console.log('Resposta inserida com sucesso. ID da denúncia:', idDaDenuncia);
-    res.status(200).send('Resposta inserida com sucesso');
+    res.status(200).json({ id: idDaDenuncia });
   } catch (error) {
     console.error('Erro ao inserir denuncia:', error);
     res.status(500).send('Erro ao inserir resposta');
   }
 });
+
 app.get('/obterDenuncia/:protocolo', async (req, res) => {
   const protocolo = req.params.protocolo;
 
@@ -57,7 +55,6 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     res.status(500).send('Erro interno do servidor');
   }
 });
-
 
 /*
 app.get('/feedback/:id', (req, res) => {
