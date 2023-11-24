@@ -23,7 +23,7 @@ client.connect().catch((eror) => console.log(eror))
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'eco.guardslzl@gmail.com',
+    user: 'eco.guardslz@gmail.com',
     pass: 'ecoguard0000',
   },
 });
