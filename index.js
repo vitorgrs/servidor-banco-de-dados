@@ -26,7 +26,9 @@ const transporter = nodemailer.createTransport({
     user: 'eco.guardslz@gmail.com',
     pass: 'ecoguard0000',
   },
+  secure: true,
 });
+
 
 
 app.post('/inserirResposta', async (req, res) => {
