@@ -18,7 +18,7 @@ const client = new Client({
     port: 59355,
 });
 
-client.conect( ).catch( ( erro )  =>  console . log( erro ) )
+client.connect().catch((eror) => console.log(eror))
 
 
 app.post('/inserirResposta', async (req, res) => {
