@@ -94,16 +94,7 @@ app.get('/obterDenuncia/:id', async (req, res) => {
   }
 });
 */
-process.on('SIGINT', async () => {
-  try {
-    await client.end();
-    console.log('Conexão com o banco de dados encerrada');
-    process.exit(0);
-  } catch (err) {
-    console.error('Erro ao encerrar a conexão com o banco de dados:', err);
-    process.exit(1);
-  }
-});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor está ouvindo na porta ${PORT}`);
