@@ -40,11 +40,11 @@ app.post('/inserirResposta', async (req, res) => {
 
 app.get('/obterDenuncia/:protocolo', async (req, res) => {
   const protocolo = req.params.protocolo;
-
+  /*
   if (!protocolo) {
     res.status(400).send('Protocolo não fornecido');
     return;
-  }
+  }*/
 
   try {
     const result = await client.query('SELECT * FROM denuncias WHERE id = $1', [protocolo]);
