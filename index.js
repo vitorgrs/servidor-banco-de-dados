@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
-
+const nodemailer = require('nodemailer');
 // Configuraçôes
 app.use(cors());
 app.use(express.json()); 
@@ -20,6 +20,14 @@ const client = new Client({
 
 client.connect().catch((eror) => console.log(eror))
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'eco.guardslzl@gmail.com',
+    pass: 'ecoguard0000',
+  },
+});
+
 
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
@@ -30,8 +38,31 @@ app.post('/inserirResposta', async (req, res) => {
   try {
     const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].id;
+    const tipodenuncia = result.rows[0].tipo_de_denuncia;
+
+     // Envio de e-mail
+    const mailOptions = {
+      from: 'eco.guardslzl@gmail.com',
+      to: 'gamervitor28@gmail.com',
+      subject: 'Nova resposta de denúncia',
+      text: `Nova resposta de denúncia. ID da denúncia: ${idDaDenuncia}, sobre: ${tipodenuncia}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Erro ao enviar e-mail:', error);
+      } else {
+        console.log('E-mail enviado:', info.response);
+      }
+    });
+
+
+
+
+
     console.log('Resposta inserida com sucesso. ID da denúncia:', idDaDenuncia);
     res.status(200).json({ id: idDaDenuncia });
+
   } catch (error) {
     console.error('Erro ao inserir denuncia:', error);
     res.status(500).send('Erro ao inserir resposta');
