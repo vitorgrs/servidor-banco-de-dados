@@ -18,13 +18,7 @@ const client = new Client({
     port: 59355,
 });
 
-try {
-  await client.connect();
-  console.log('Conexão bem-sucedida ao banco de dados');
-} catch (error) {
-  console.error('Erro ao conectar ao banco de dados:', error);
-  // Terminar o aplicativo ou tomar medidas apropriadas
-}
+cliente . conectar ( ) . catch ( ( erro )  =>  console . log ( erro ) )
 
 
 app.post('/inserirResposta', async (req, res) => {
