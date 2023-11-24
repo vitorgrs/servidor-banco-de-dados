@@ -56,35 +56,6 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
   }
 });
 
-/*
-app.get('/feedback/:id', (req, res) => {
-  const protocolo = req.params.id;
-  const filePath = path.join( __dirname, 'feedback.html');  
-  res.sendFile(filePath);
-});
-
-// Rota para obter os detalhes da denúncia com base no ID
-app.get('/obterDenuncia/:id', async (req, res) => {
-  const idDaDenuncia = req.params.id;
-  const query = 'SELECT * FROM denuncias WHERE id = $1';
-  const values = [idDaDenuncia];
-
-  try {
-    const result = await client.query(query, values);
-    const denuncia = result.rows[0];
-
-    if (denuncia) {
-      // Retorna o JSON diretamente
-      res.status(200).json(denuncia);
-    } else {
-      res.status(404).send('Denúncia não encontrada');
-    }
-  } catch (error) {
-    console.error('Erro ao buscar dados da denúncia:', error);
-    res.status(500).send('Erro ao buscar dados da denúncia');
-  }
-});
-*/
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
