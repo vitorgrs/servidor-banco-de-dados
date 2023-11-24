@@ -50,7 +50,7 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
   const protocolo = req.params.protocolo;
 
   try {
-    const result = await db.query('SELECT * FROM denuncias WHERE protocolo = $1', [protocolo]);
+    const result = await client.query('SELECT * FROM denuncias WHERE protocolo = $1', [protocolo]);
     
     if (result.rows.length > 0) {
       const denuncia = result.rows[0];
