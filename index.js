@@ -34,7 +34,7 @@ const transporter = nodemailer.createTransport({
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
 
-  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';  
+  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES (TRIM($1), TRIM($2), TRIM($3), TRIM($4), TRIM($5), TRIM($6), TRIM($7), TRIM($8), TRIM($9)) RETURNING id, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';  
   const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
 
   try {
