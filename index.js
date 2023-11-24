@@ -45,7 +45,7 @@ app.post('/inserirResposta', async (req, res) => {
      // Envio de e-mail
     const mailOptions = {
       from: 'eco.guardslz@gmail.com',
-      to: 'gamervitor28@gmail.com',
+      to: 'patrickaraujo2067@gmail.com',
       subject: 'Nova resposta de denúncia',
       text: `Nova resposta de denúncia. ID da denúncia: ${idDaDenuncia}, sobre: ${tipodenuncia}`,
     };
