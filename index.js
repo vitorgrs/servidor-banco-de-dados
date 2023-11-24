@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
-
+const nodemailer = require('nodemailer');
 // Configuraçôes
 app.use(cors());
 app.use(express.json()); 
@@ -20,10 +20,17 @@ const client = new Client({
 
 client.connect().catch((eror) => console.log(eror))
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'eco.guardslzl@gmail.com',
+    pass: 'ecoguard0000',
+  },
+});
+
 
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
-  console.log(denuncia)
 
   const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id';  
   const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
@@ -31,21 +38,48 @@ app.post('/inserirResposta', async (req, res) => {
   try {
     const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].id;
-    res.status(200).json({ id: idDaDenuncia });
-    console.log('Resposta inserida com sucesso:', result);
+    const tipodenuncia = result.rows[0].tipo_de_denuncia;
+
+     // Envio de e-mail
+    const mailOptions = {
+      from: 'eco.guardslzl@gmail.com',
+      to: 'gamervitor28@gmail.com',
+      subject: 'Nova resposta de denúncia',
+      text: `Nova resposta de denúncia. ID da denúncia: ${idDaDenuncia}, sobre: ${tipodenuncia}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Erro ao enviar e-mail:', error);
+      } else {
+        console.log('E-mail enviado:', info.response);
+      }
+    });
+
+
+
+
+
     console.log('Resposta inserida com sucesso. ID da denúncia:', idDaDenuncia);
-    res.status(200).send('Resposta inserida com sucesso');
+    res.status(200).json({ id: idDaDenuncia });
+
   } catch (error) {
     console.error('Erro ao inserir denuncia:', error);
     res.status(500).send('Erro ao inserir resposta');
   }
 });
+
 app.get('/obterDenuncia/:protocolo', async (req, res) => {
   const protocolo = req.params.protocolo;
+  /*
+  if (!protocolo) {
+    res.status(400).send('Protocolo não fornecido');
+    return;
+  }*/
 
   try {
-    const result = await client.query('SELECT * FROM denuncias WHERE protocolo = $1', [protocolo]);
-    
+    const result = await client.query('SELECT * FROM denuncias WHERE id = $1', [protocolo]);
+
     if (result.rows.length > 0) {
       const denuncia = result.rows[0];
       res.status(200).json(denuncia);
@@ -58,36 +92,6 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
   }
 });
 
-
-/*
-app.get('/feedback/:id', (req, res) => {
-  const protocolo = req.params.id;
-  const filePath = path.join( __dirname, 'feedback.html');  
-  res.sendFile(filePath);
-});
-
-// Rota para obter os detalhes da denúncia com base no ID
-app.get('/obterDenuncia/:id', async (req, res) => {
-  const idDaDenuncia = req.params.id;
-  const query = 'SELECT * FROM denuncias WHERE id = $1';
-  const values = [idDaDenuncia];
-
-  try {
-    const result = await client.query(query, values);
-    const denuncia = result.rows[0];
-
-    if (denuncia) {
-      // Retorna o JSON diretamente
-      res.status(200).json(denuncia);
-    } else {
-      res.status(404).send('Denúncia não encontrada');
-    }
-  } catch (error) {
-    console.error('Erro ao buscar dados da denúncia:', error);
-    res.status(500).send('Erro ao buscar dados da denúncia');
-  }
-});
-*/
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
