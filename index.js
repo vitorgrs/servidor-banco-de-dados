@@ -35,7 +35,8 @@ app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
 
   const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES (TRIM($1), TRIM($2), TRIM($3), TRIM($4), TRIM($5), TRIM($6), TRIM($7), TRIM($8), TRIM($9)) RETURNING TRIM(id), TRIM(tipo_de_denuncia), TRIM(data_do_ocorrido), TRIM(relato), TRIM(logradouro), TRIM(complemento), TRIM(cidade), TRIM(bairro), TRIM(descricao_do_local), TRIM(contato)';  
-  const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
+  const values = [String(denuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos),];
+
 
   try {
     const result = await client.query(query, values);
