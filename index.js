@@ -55,15 +55,33 @@ mailListener.on('server:disconnected', () => {
 mailListener.on('mail', (mail, seqno, attributes) => {
   console.log('Novo e-mail recebido:', mail.subject);
 
-  // Extrair o ID da denúncia do corpo do e-mail (ajuste conforme necessário)
-  const idDaDenunciaMatch = mail.text.match(/Protocolo: (\d+)/);
-  const idDaDenuncia = idDaDenunciaMatch ? parseInt(idDaDenunciaMatch[1]) : null;
+  // Encontrar a linha que indica o início da resposta
+  const respostaRegex = /^Em .*\d{2}:\d{2}, <[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}> escreveu:/;
+  const respostaMatch = mail.text.match(respostaRegex);
 
-  if (idDaDenuncia) {
-    // Lógica para lidar com a resposta usando o ID da denúncia
-    inserirRespostaNoBanco(idDaDenuncia, mail.text);
+  if (respostaMatch) {
+    const inicioResposta = respostaMatch[0];
+    const respostaIndex = mail.text.indexOf(inicioResposta);
+
+    if (respostaIndex !== -1) {
+      const corpoEmail = mail.text.substring(respostaIndex + inicioResposta.length).trim();
+
+      // Extrair o Message-ID
+      const messageIdMatch = mail.headers['message-id'].match(/<([^>]+)>');
+      if (messageIdMatch) {
+        const respostaID = messageIdMatch[1];
+        console.log('Resposta recebida para o ID:', respostaID);
+
+        // Lógica para lidar com a resposta usando o ID
+        inserirRespostaNoBanco(respostaID, corpoEmail);
+      } else {
+        console.log('Message-ID não encontrado no cabeçalho do e-mail');
+      }
+    } else {
+      console.log('Linha de início da resposta encontrada, mas não foi possível extrair o corpo do e-mail');
+    }
   } else {
-    console.error('ID da denúncia não encontrado no corpo do e-mail:', mail.text);
+    console.log('Linha de início da resposta não encontrada no corpo do e-mail');
   }
 });
 
