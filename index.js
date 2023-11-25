@@ -42,7 +42,7 @@ const transporter = nodemailer.createTransport({
 
 function extractDenunciaIdentifier(respostaDoEmail) {
 
-  const idDaDenunciaHeader = respostaDoEmail.headers['X-Id-Denuncia'];
+  const idDaDenunciaHeader = respostaDoEmail.headers['X-Id-Denuncia']   || respostaDoEmail.headers['X-Id-Denuncia'];
   
   if (idDaDenunciaHeader) {
     return idDaDenunciaHeader;
