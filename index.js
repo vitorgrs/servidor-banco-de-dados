@@ -10,11 +10,13 @@ const socketIO = require('socket.io');
 
 const server = http.createServer(app);
 const io = socketIO(server, {
+  path: '/socket.io/',
   cors: {
-    origin: 'https://eco-guard.vercel.app/scr/feedback.html',
+    origin: '*',
     methods: ['GET', 'POST'],
   },
 });
+
 
 
 io.on('connection', (socket) => {
