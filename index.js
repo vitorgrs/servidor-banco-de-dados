@@ -74,9 +74,8 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
     const correspondencia = corpoEmail.match(regex);
 
     if (correspondencia) {
-      // Extrair a linha e o conteúdo após ela
-      const linhaCompleta = correspondencia[0];
-      const conteudoRelevante = corpoEmail.substring(corpoEmail.indexOf(linhaCompleta) + linhaCompleta.length).trim();
+      // Extrair o conteúdo após a linha
+      const conteudoRelevante = corpoEmail.substring(corpoEmail.indexOf(correspondencia[0]) + correspondencia[0].length).trim();
 
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE id = $1', [respostaID]);
