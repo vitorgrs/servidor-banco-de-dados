@@ -5,24 +5,7 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-const http = require('http');
-const socketIO = require('socket.io');
-
-const server = http.createServer(app);
-const io = socketIO(server, {
-  path: '/socket.io/',
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
-});
-
-
-
-io.on('connection', (socket) => {
-  console.log('Cliente conectado');
-  // Lógica adicional do Socket.IO
-});
+const MailListener = require('mail-listener2');
 
 // Configuraçôes
 app.use(cors());
@@ -46,24 +29,64 @@ const transporter = nodemailer.createTransport({
     user: 'eco.guardslz@gmail.com',
     pass: 'xovv ekaf cobv otgt', // Use a senha de aplicativo aqui
   },
-    replyTo: 'https://eco-guard.vercel.app/respostaEmail',
+});
+const mailListener = new MailListener({
+  username: 'eco.guardslz@gmail.com',
+  password: 'xovv ekaf cobv otgt',
+  host: 'imap.gmail.com',
+  port: 993,
+  tls: true,
+  tlsOptions: { rejectUnauthorized: false },
+  mailbox: 'INBOX',
+  searchFilter: ['UNSEEN'],
+  markSeen: true,
+  fetchUnreadOnStart: true,
+  mailParserOptions: { streamAttachments: true },
+});
+mailListener.start();
+
+mailListener.on('server:connected', () => {
+  console.log('Servidor conectado');
 });
 
+mailListener.on('server:disconnected', () => {
+  console.log('Servidor desconectado');
+});
 
-function extractDenunciaIdentifier(respostaDoEmail) {
+mailListener.on('mail', (mail, seqno, attributes) => {
+  console.log('Novo e-mail recebido:', mail.subject);
 
-  const idDaDenunciaHeader = respostaDoEmail.headers['X-Id-Denuncia']   || respostaDoEmail.headers['X-Id-Denuncia'];
-  
-  if (idDaDenunciaHeader) {
-    return idDaDenunciaHeader;
+  // Extrair o Message-ID
+  const messageIdMatch = mail.headers['message-id'].match(/<([^>]+)>/);
+  if (messageIdMatch) {
+    const respostaID = messageIdMatch[1];
+    console.log('Resposta recebida para o ID:', respostaID);
+
+    // Lógica para lidar com a resposta usando o ID
+    inserirRespostaNoBanco(respostaID, mail.text);
   } else {
-    // Lidar com a situação em que o cabeçalho personalizado não está presente no e-mail
-    console.error('Cabeçalho personalizado "X-Id-Denuncia" não encontrado no e-mail.');
-    return null; // Ou retorne um valor padrão ou lide com isso de acordo com sua lógica
+    console.log('Message-ID não encontrado no cabeçalho do e-mail');
+  }
+});
+
+async function inserirRespostaNoBanco(respostaID, corpoEmail) {
+  try {
+    const client = await pool.connect();
+    try {
+      // Inserir os dados na tabela "denuncia"
+      const query = `
+        INSERT INTO denuncia (id, resposta)
+        VALUES ($1, $2)
+        ON CONFLICT (id) DO UPDATE SET resposta = $2;
+      `;
+      await client.query(query, [respostaID, corpoEmail]);
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    console.error('Erro ao inserir resposta no banco de dados:', err);
   }
 }
-
-
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
 
@@ -115,8 +138,8 @@ app.post('/inserirResposta', async (req, res) => {
         <p>Contato: ${contato}</p>
       `,
       headers: {
-        'X-Id-Denuncia': idDaDenuncia // Adicione o idDaDenuncia como um cabeçalho personalizado
-      }    
+        'Message-ID': `<${idDaDenuncia}eco.guradslz@gmail.com>`, // Adicione o idDaDenuncia como um cabeçalho personalizado
+      },    
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -163,28 +186,6 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     res.status(500).send('Erro interno do servidor');
   }
 });
-app.post('/respostaEmail', (req, res) => {
-  // Extrair informações da resposta do e-mail
-  const respostaDoEmail = req.body.text; // Ajuste conforme a estrutura real do e-mail
-
-  // Extraia o identificador da denúncia da resposta do e-mail
-  const identificadorDenuncia = extractDenunciaIdentifier(respostaDoEmail); // Implemente a lógica para extrair o identificador
-
-  // Envie a resposta diretamente para a página HTML
-  io.emit('respostaDenuncia', { identificadorDenuncia, respostaDoEmail });
-
-  res.status(200).send('Resposta de e-mail processada com sucesso.');
-});
-/*
-app.get('/api/feedback', async (req, res) => {
-  const identificador = req.query.protocolo;
-
-  // Lógica para buscar o feedback no banco de dados usando o código único
-  // ...
-
-  // Exemplo de resposta
-  res.json({ feedback: 'Feedback obtido do banco de dados' });
-});*/
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
