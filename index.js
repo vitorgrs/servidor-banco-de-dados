@@ -74,8 +74,10 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
     const correspondencia = corpoEmail.match(regex);
 
     if (correspondencia) {
-      // Extrair o conteúdo após a linha
-      const conteudoRelevante = corpoEmail.substring(corpoEmail.indexOf(correspondencia[0]) + correspondencia[0].length).trim();
+      // Extrair a linha e o conteúdo após ela
+      const linhaCompleta = correspondencia[0];
+      const inicioLinha = corpoEmail.indexOf(linhaCompleta);
+      const conteudoRelevante = corpoEmail.substring(inicioLinha + linhaCompleta.length).trim();
 
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE id = $1', [respostaID]);
@@ -83,13 +85,14 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
       if (denunciaExistente.rows.length > 0) {
         // Atualizar a tabela "denuncias" com a resposta
         const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE id = $2';
-        await client.query(updateQuery, [conteudoRelevante, respostaID]);
+        await client.query(updateQuery, [linhaCompleta + '\n' + conteudoRelevante, respostaID]);
       }
     }
   } catch (err) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
 }
+
 
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
