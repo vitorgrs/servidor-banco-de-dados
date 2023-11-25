@@ -56,7 +56,7 @@ mailListener.on('mail', (mail, seqno, attributes) => {
   console.log('Novo e-mail recebido:', mail.subject);
 
   // Encontrar a linha que indica o início da resposta
-  const respostaRegex = /^Em .+ escreveu:/;
+  const respostaRegex = /^Em .+? escreveu:/;
   const respostaMatch = mail.text.match(respostaRegex);
 
   if (respostaMatch) {
