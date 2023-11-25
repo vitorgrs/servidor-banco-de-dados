@@ -69,21 +69,14 @@ mailListener.on('mail', (mail, seqno, attributes) => {
 
 async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
-    const resultado = await client.connect();
-    try {
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE id = $1', [respostaID]);
 
       if (denunciaExistente.rows.length > 0) {
         // Atualizar a tabela "denuncias" com a resposta
         const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE id = $2';
-        await client.query(updateQuery, [corpoEmail, respostaID]);
-      } else {
-        console.error('Denúncia correspondente não encontrada para o ID:', respostaID);
+        await client.query(updateQuery, [corpoEmail, respostaID]); 
       }
-    } finally {
-      client.release();
-    }
   } catch (err) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
