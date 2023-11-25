@@ -181,8 +181,8 @@ app.get('/api/feedback', async (req, res) => {
 
   // Exemplo de resposta
   res.json({ feedback: 'Feedback obtido do banco de dados' });
-});
+});*/
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor está ouvindo na porta ${PORT}`);
-});*/
+});
