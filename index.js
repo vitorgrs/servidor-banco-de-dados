@@ -73,7 +73,7 @@ async function inserirRespostaNoBanco(idDaDenuncia, corpoEmail) {
 
     // Inserir os dados na tabela "denuncia"
     const query = `
-      INSERT INTO denuncia (id, resposta)
+      INSERT INTO denuncias (id, resposta)
       VALUES ($1, $2)
       ON CONFLICT (id) DO UPDATE SET respostaemail = $2;
     `;
