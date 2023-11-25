@@ -9,7 +9,12 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
 
 // Configuraçôes
 app.use(cors());
@@ -28,6 +33,11 @@ client.connect().catch((eror) => console.log(eror))
 
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
+
+  // Evento de exemplo, você pode ajustar conforme necessário
+  socket.on('exemplo', (data) => {
+    console.log('Evento de exemplo recebido:', data);
+  });
 });
 
 const transporter = nodemailer.createTransport({
