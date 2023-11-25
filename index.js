@@ -38,8 +38,7 @@ app.post('/inserirResposta', async (req, res) => {
   const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
 
   try {
-    const trimmedValues = values.map(value => (typeof value === 'string' ? value.trim() : value));
-    const result = await client.query(query, trimmedValues);
+    const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].id;
     const tipodenuncia = result.rows[0].tipo_de_denuncia;
     const data= result.rows[0].data_do_ocorrido;
@@ -51,19 +50,7 @@ app.post('/inserirResposta', async (req, res) => {
     const descricao = result.rows[0].descricao_do_local;
     const contato = result.rows[0].contato;
 
-    console.log('Dados antes de enviar o e-mail:', {
-      idDaDenuncia,
-      tipodenuncia,
-      data,
-      relato,
-      logradouro,
-      complemento,
-      cidade,
-      bairro,
-      descricao,
-      contato,
-    });
-
+    
      // Envio de e-mail
     const mailOptions = {
       from: 'eco.guardslz@gmail.com',
