@@ -124,7 +124,7 @@ app.post('/inserirResposta', async (req, res) => {
         Cidade: ${cidade}
         Bairro: ${bairro}
         Descrição do local: ${descricao}
-        Contato: ${contatoInfo}
+        Contato: ${contato}
       `,
       html: `
         <p>Denúncia realizada:</p>
