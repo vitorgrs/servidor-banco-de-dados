@@ -106,7 +106,7 @@ app.post('/inserirResposta', async (req, res) => {
     const bairro = result.rows[0].bairro;
     const descricao = result.rows[0].descricao_do_local;
     const contato = result.rows[0].contato;
-    const contatoInfo = contato && contato.trim() !== '' ? contato : 'Sem informações de contato';
+    const contatoInfo = contato || contato.trim() !== '' ? contato : 'Sem informações de contato';
 
     
      // Envio de e-mail
@@ -124,7 +124,7 @@ app.post('/inserirResposta', async (req, res) => {
         Cidade: ${cidade}
         Bairro: ${bairro}
         Descrição do local: ${descricao}
-        Contato: ${contato}
+        Contato: ${contatoInfo}
       `,
       html: `
         <p>Denúncia realizada:</p>
