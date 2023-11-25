@@ -34,9 +34,16 @@ client.connect().catch((eror) => console.log(eror))
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
 
-  // Evento de exemplo, você pode ajustar conforme necessário
   socket.on('exemplo', (data) => {
     console.log('Evento de exemplo recebido:', data);
+  });
+
+  socket.on('respostaEmail', (data) => {
+    // Aqui você pode processar a resposta do e-mail conforme necessário
+    console.log('Resposta de e-mail recebida:', data);
+
+    // Transmitir a resposta para os clientes conectados
+    io.emit('respostaDenuncia', { identificadorDenuncia: data.identificadorDenuncia, respostaDoEmail: data.respostaDoEmail });
   });
 });
 
@@ -175,8 +182,17 @@ app.post('/respostaEmail', (req, res) => {
 
   res.status(200).send('Resposta de e-mail processada com sucesso.');
 });
+/*
+app.get('/api/feedback', async (req, res) => {
+  const identificador = req.query.protocolo;
 
+  // Lógica para buscar o feedback no banco de dados usando o código único
+  // ...
+
+  // Exemplo de resposta
+  res.json({ feedback: 'Feedback obtido do banco de dados' });
+});
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor está ouvindo na porta ${PORT}`);
-});
+});*/
