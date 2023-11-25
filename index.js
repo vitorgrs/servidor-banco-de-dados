@@ -114,6 +114,7 @@ app.post('/inserirResposta', async (req, res) => {
       subject: 'Denúncia realizada através do site ecoguard',
     text: `
         Denúncia realizada:
+        Protocolo: ${idDaDenuncia}
         Sobre: ${tipodenuncia}
         Data do ocorrido: ${data}
         Relato: ${relato}
@@ -126,6 +127,7 @@ app.post('/inserirResposta', async (req, res) => {
       `,
       html: `
         <p>Denúncia realizada:</p>
+        <p>Protocolo: ${idDaDenuncia}</p>
         <p>Sobre: ${tipodenuncia}</p>
         <p>Data do ocorrido: ${data}</p>
         <p>Relato: ${relato.replace(/\n/g, '<br>')}</p>
