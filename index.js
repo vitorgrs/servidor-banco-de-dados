@@ -31,7 +31,7 @@ const client = new Client({
     user: 'postgres',
     host: 'monorail.proxy.rlwy.net',
     database: 'railway',
-    password: process.env.DB_PASSWORD,
+    password: process.env.POSTGRES_PASSWORD,
     port: 59355,
 });
 
