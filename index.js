@@ -57,18 +57,30 @@ app.post('/inserirResposta', async (req, res) => {
       from: 'eco.guardslz@gmail.com',
       to: 'gamervitor28@gmail.com',
       subject: 'Denúncia realizada através do site ecoguard',
-     html: `
+    text: `
+        Denúncia realizada:
+        Sobre: ${tipodenuncia}
+        Data do ocorrido: ${data}
+        Relato: ${relato}
+        Logradouro: ${logradouro}
+        Complemento: ${complemento}
+        Cidade: ${cidade}
+        Bairro: ${bairro}
+        Descrição do local: ${descricao}
+        Contato: ${contato}
+      `,
+      html: `
         <p>Denúncia realizada:</p>
         <p>Sobre: ${tipodenuncia}</p>
         <p>Data do ocorrido: ${data}</p>
-        <p>Relato: ${relato}</p>
+        <p>Relato: ${relato.replace(/\n/g, '<br>')}</p>
         <p>Logradouro: ${logradouro}</p>
         <p>Complemento: ${complemento}</p>
         <p>Cidade: ${cidade}</p>
         <p>Bairro: ${bairro}</p>
-        <p>Descrição do local: ${descricao}</p>
+        <p>Descrição do local: ${descricao.replace(/\n/g, '<br>')}</p>
         <p>Contato: ${contato}</p>
-     `,
+      `,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
