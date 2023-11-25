@@ -38,7 +38,6 @@ const mailListener = new MailListener({
   tls: true,
   tlsOptions: { rejectUnauthorized: false },
   mailbox: 'INBOX',
-  searchFilter: ['UNSEEN'],
   markSeen: true,
   fetchUnreadOnStart: true,
   mailParserOptions: { streamAttachments: true },
@@ -56,20 +55,19 @@ mailListener.on('server:disconnected', () => {
 mailListener.on('mail', (mail, seqno, attributes) => {
   console.log('Novo e-mail recebido:', mail.subject);
 
-  // Extrair o Message-ID
-  const messageIdMatch = mail.headers['message-id'].match(/<([^>]+)>/);
-  if (messageIdMatch) {
-    const respostaID = messageIdMatch[1];
-    console.log('Resposta recebida para o ID:', respostaID);
+  // Extrair o ID da denúncia do corpo do e-mail (ajuste conforme necessário)
+  const idDaDenunciaMatch = mail.text.match(/ID da Denúncia: (\d+)/);
+  const idDaDenuncia = idDaDenunciaMatch ? parseInt(idDaDenunciaMatch[1]) : null;
 
-    // Lógica para lidar com a resposta usando o ID
-    inserirRespostaNoBanco(respostaID, mail.text);
+  if (idDaDenuncia) {
+    // Lógica para lidar com a resposta usando o ID da denúncia
+    inserirRespostaNoBanco(idDaDenuncia, mail.text);
   } else {
-    console.log('Message-ID não encontrado no cabeçalho do e-mail');
+    console.error('ID da denúncia não encontrado no corpo do e-mail:', mail.text);
   }
 });
 
-async function inserirRespostaNoBanco(respostaID, corpoEmail) {
+async function inserirRespostaNoBanco(idDaDenuncia, corpoEmail) {
   try {
     const resultado = await client.connect();
     try {
@@ -79,7 +77,7 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
         VALUES ($1, $2)
         ON CONFLICT (id) DO UPDATE SET respostaemail = $2;
       `;
-      await client.query(query, [respostaID, corpoEmail]);
+      await client.query(query, [idDaDenuncia, corpoEmail]);
     } finally {
       client.release();
     }
