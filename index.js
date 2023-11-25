@@ -51,6 +51,19 @@ app.post('/inserirResposta', async (req, res) => {
     const descricao = result.rows[0].descricao_do_local;
     const contato = result.rows[0].contato;
 
+    console.log('Dados antes de enviar o e-mail:', {
+      idDaDenuncia,
+      tipodenuncia,
+      data,
+      relato,
+      logradouro,
+      complemento,
+      cidade,
+      bairro,
+      descricao,
+      contato,
+    });
+
      // Envio de e-mail
     const mailOptions = {
       from: 'eco.guardslz@gmail.com',
