@@ -55,51 +55,43 @@ mailListener.on('server:disconnected', () => {
 mailListener.on('mail', (mail, seqno, attributes) => {
   console.log('Novo e-mail recebido:', mail.subject);
 
-  // Encontrar a linha que indica o início da resposta
-  const respostaRegex = /^Em .+? escreveu:/;
-  const respostaMatch = mail.text.match(respostaRegex);
+  // Extrair o ID da denúncia do corpo do e-mail (ajuste conforme necessário)
+  const idDaDenunciaMatch = mail.text.match(/Protocolo: (\d+)/);
+  const idDaDenuncia = idDaDenunciaMatch ? parseInt(idDaDenunciaMatch[1]) : null;
 
-  if (respostaMatch) {
-    const inicioResposta = respostaMatch[0];
-    const respostaIndex = mail.text.indexOf(inicioResposta);
-
-    if (respostaIndex !== -1) {
-      
-  
-        // Ignorar tudo a partir do início da resposta até o final do e-mail
-      const corpoEmail = mail.text.substring(0, respostaIndex).trim();
-      const idDaDenunciaMatch = mail.text.match(/Protocolo: (\d+)/);
-      const idDaDenuncia = idDaDenunciaMatch ? parseInt(idDaDenunciaMatch[1]) : null;
-
-      if (idDaDenuncia) {
-
-        // Lógica para lidar com a resposta usando o ID
-        inserirRespostaNoBanco(respostaID, corpoEmail);
-      } else {
-        console.log('Message-ID não encontrado no cabeçalho do e-mail');
-      }
-    } else {
-      console.log('Linha de início da resposta encontrada, mas não foi possível extrair o corpo do e-mail');
-    }
+  if (idDaDenuncia) {
+    // Lógica para lidar com a resposta usando o ID da denúncia
+    inserirRespostaNoBanco(idDaDenuncia, mail.text);
   } else {
-    console.log('Linha de início da resposta não encontrada no corpo do e-mail');
+    console.error('ID da denúncia não encontrado no corpo do e-mail:', mail.text);
   }
 });
 
 async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
+    // Encontrar a linha que começa com 'Em' e termina com 'escreveu:'
+    const regex = /Em[^\n]+escreveu:/;
+    const correspondencia = corpoEmail.match(regex);
+
+    if (correspondencia) {
+      // Extrair a linha e o conteúdo após ela
+      const linhaCompleta = correspondencia[0];
+      const conteudoRelevante = corpoEmail.substring(corpoEmail.indexOf(linhaCompleta) + linhaCompleta.length).trim();
+
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE id = $1', [respostaID]);
 
       if (denunciaExistente.rows.length > 0) {
         // Atualizar a tabela "denuncias" com a resposta
         const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE id = $2';
-        await client.query(updateQuery, [corpoEmail, respostaID]); 
+        await client.query(updateQuery, [conteudoRelevante, respostaID]);
       }
+    }
   } catch (err) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
 }
+
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
 
