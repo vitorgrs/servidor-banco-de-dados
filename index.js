@@ -69,18 +69,15 @@ mailListener.on('mail', (mail, seqno, attributes) => {
 
 async function inserirRespostaNoBanco(idDaDenuncia, corpoEmail) {
   try {
-    const resultado = await client.connect();
-    try {
-      // Inserir os dados na tabela "denuncia"
-      const query = `
-        INSERT INTO denuncia (id, resposta)
-        VALUES ($1, $2)
-        ON CONFLICT (id) DO UPDATE SET respostaemail = $2;
-      `;
-      await client.query(query, [idDaDenuncia, corpoEmail]);
-    } finally {
-      client.release();
-    }
+    // Não é necessário conectar novamente, pois a conexão já foi estabelecida
+
+    // Inserir os dados na tabela "denuncia"
+    const query = `
+      INSERT INTO denuncia (id, resposta)
+      VALUES ($1, $2)
+      ON CONFLICT (id) DO UPDATE SET respostaemail = $2;
+    `;
+    await client.query(query, [idDaDenuncia, corpoEmail]);
   } catch (err) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
