@@ -5,6 +5,12 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
+const http = require('http');
+const socketIO = require('socket.io');
+
+const server = http.createServer(app);
+const io = socketIO(server);
+
 // Configuraçôes
 app.use(cors());
 app.use(express.json()); 
@@ -20,12 +26,17 @@ const client = new Client({
 
 client.connect().catch((eror) => console.log(eror))
 
+io.on('connection', (socket) => {
+  console.log('Cliente conectado');
+});
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'eco.guardslz@gmail.com',
     pass: 'xovv ekaf cobv otgt', // Use a senha de aplicativo aqui
   },
+    replyTo: 'https://eco-guard.vercel.app/respostaEmail',
 });
 
 
@@ -91,6 +102,7 @@ app.post('/inserirResposta', async (req, res) => {
         console.log('E-mail enviado:', info.response);
         res.status(200).json({ id: idDaDenuncia });
       }
+      
     });
 
 
@@ -126,7 +138,18 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     res.status(500).send('Erro interno do servidor');
   }
 });
+app.post('/respostaEmail', (req, res) => {
+  // Extrair informações da resposta do e-mail
+  const respostaDoEmail = req.body.text; // Ajuste conforme a estrutura real do e-mail
 
+  // Extraia o identificador da denúncia da resposta do e-mail
+  const identificadorDenuncia = extractDenunciaIdentifier(respostaDoEmail); // Implemente a lógica para extrair o identificador
+
+  // Envie a resposta diretamente para a página HTML
+  io.emit('respostaDenuncia', { identificadorDenuncia, respostaDoEmail });
+
+  res.status(200).send('Resposta de e-mail processada com sucesso.');
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
