@@ -71,9 +71,9 @@ async function inserirRespostaNoBanco(idDaDenuncia, corpoEmail) {
   try {
     // Não é necessário conectar novamente, pois a conexão já foi estabelecida
 
-    // Inserir os dados na tabela "denuncia"
+    // Inserir os dados na tabela "denuncias"
     const query = `
-      INSERT INTO denuncias (id, resposta)
+      INSERT INTO denuncias (id, respostaemail)
       VALUES ($1, $2)
       ON CONFLICT (id) DO UPDATE SET respostaemail = $2;
     `;
