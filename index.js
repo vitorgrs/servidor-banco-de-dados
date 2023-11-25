@@ -11,9 +11,14 @@ const socketIO = require('socket.io');
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: '*',
+    origin: 'https://eco-guard.vercel.app',
     methods: ['GET', 'POST'],
   },
+});
+
+io.on('connection', (socket) => {
+  console.log('Cliente conectado');
+  // Lógica adicional do Socket.IO
 });
 
 // Configuraçôes
@@ -31,21 +36,6 @@ const client = new Client({
 
 client.connect().catch((eror) => console.log(eror))
 
-io.on('connection', (socket) => {
-  console.log('Cliente conectado');
-
-  socket.on('exemplo', (data) => {
-    console.log('Evento de exemplo recebido:', data);
-  });
-
-  socket.on('respostaEmail', (data) => {
-    // Aqui você pode processar a resposta do e-mail conforme necessário
-    console.log('Resposta de e-mail recebida:', data);
-
-    // Transmitir a resposta para os clientes conectados
-    io.emit('respostaDenuncia', { identificadorDenuncia: data.identificadorDenuncia, respostaDoEmail: data.respostaDoEmail });
-  });
-});
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
