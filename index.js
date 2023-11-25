@@ -38,7 +38,8 @@ app.post('/inserirResposta', async (req, res) => {
   const values = [denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos];
 
   try {
-    const result = await client.query(query, values);
+    const trimmedValues = values.map(value => (typeof value === 'string' ? value.trim() : value));
+    const result = await client.query(query, trimmedValues);
     const idDaDenuncia = result.rows[0].id;
     const tipodenuncia = result.rows[0].tipo_de_denuncia;
     const data= result.rows[0].data_do_ocorrido;
