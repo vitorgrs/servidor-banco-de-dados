@@ -183,14 +183,7 @@ app.get('/api/feedback', async (req, res) => {
   // Exemplo de resposta
   res.json({ feedback: 'Feedback obtido do banco de dados' });
 });*/
-app.use((req, res) => {
-  res.status(404).send('Página não encontrada');
-});
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Erro interno do servidor');
-});
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor está ouvindo na porta ${PORT}`);
