@@ -40,6 +40,18 @@ const transporter = nodemailer.createTransport({
 });
 
 
+function extractDenunciaIdentifier(respostaDoEmail) {
+
+  const idDaDenunciaHeader = respostaDoEmail.headers['x-id-denuncia'];
+  
+  if (idDaDenunciaHeader) {
+    return idDaDenunciaHeader;
+  } else {
+    // Lidar com a situação em que o cabeçalho personalizado não está presente no e-mail
+    console.error('Cabeçalho personalizado "X-Id-Denuncia" não encontrado no e-mail.');
+    return null; // Ou retorne um valor padrão ou lide com isso de acordo com sua lógica
+  }
+}
 
 
 app.post('/inserirResposta', async (req, res) => {
@@ -92,6 +104,9 @@ app.post('/inserirResposta', async (req, res) => {
         <p>Descrição do local: ${descricao.replace(/\n/g, '<br>')}</p>
         <p>Contato: ${contato}</p>
       `,
+      headers: {
+        'X-Id-Denuncia': idDaDenuncia // Adicione o idDaDenuncia como um cabeçalho personalizado
+      }    
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
