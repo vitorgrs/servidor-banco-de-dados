@@ -71,13 +71,13 @@ mailListener.on('mail', (mail, seqno, attributes) => {
 
 async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
-    const client = await pool.connect();
+    const resultado = await client.connect();
     try {
       // Inserir os dados na tabela "denuncia"
       const query = `
         INSERT INTO denuncia (id, resposta)
         VALUES ($1, $2)
-        ON CONFLICT (id) DO UPDATE SET resposta = $2;
+        ON CONFLICT (id) DO UPDATE SET respostaemail = $2;
       `;
       await client.query(query, [respostaID, corpoEmail]);
     } finally {
