@@ -68,7 +68,7 @@ mailListener.on('mail', (mail, seqno, attributes) => {
   
         // Ignorar tudo a partir do início da resposta até o final do e-mail
       const corpoEmail = mail.text.substring(0, respostaIndex).trim();
-      const idDaDenunciaMatch = mail.text.match(/ID da Denúncia: (\d+)/);
+      const idDaDenunciaMatch = mail.text.match(/Protocolo: (\d+)/);
       const idDaDenuncia = idDaDenunciaMatch ? parseInt(idDaDenunciaMatch[1]) : null;
 
       if (idDaDenuncia) {
