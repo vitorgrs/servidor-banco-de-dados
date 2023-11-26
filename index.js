@@ -202,7 +202,6 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
   }
 });
 const instagramToken = 'IGQWRNLTFsb1d0djdOcmlPTVAwRHNzc3dMX3IwNzlCVXk4LWw4TmxocFJZAWDlCcjBONEJMY3NEcXVVUTJEMFgxWWtpSUNfa2l1TlVBOEVHODFXSnllX0UycXo5cGpNQ2xDWWtTMmQtYUpfYTdXYjBxaFhsNncyU0UZD';
-const twitterBearerToken = '1724780070454300672-76wZAkVX4JlneNCOMcuBlD9zIb32dH';
 
 // Rota para obter dados do Instagram
 app.get('/getInstagramFeed', async (req, res) => {
@@ -215,21 +214,7 @@ app.get('/getInstagramFeed', async (req, res) => {
     }
 });
 
-// Rota para obter dados do Twitter
-app.get('/getTwitterFeed', async (req, res) => {
-    try {
-        const response = await axios.get('https://api.twitter.com/2/tweets?tweet.fields=text,created_at&user.fields=profile_image_url,username', {
-            headers: {
-                Authorization: `Bearer ${twitterBearerToken}`,
-            },
-        });
-    
-        res.json(response.data);
-   } catch (error) {
-        console.error(error);
-        res.status(500).send('Erro interno do servidor ao obter dados do Twitter');
-    }
-});
+
 
 
 const PORT = process.env.PORT || 3001;
