@@ -69,15 +69,17 @@ mailListener.on('mail', (mail, seqno, attributes) => {
 
 async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
+    // Armazenar todo o texto da resposta
+    const textoResposta = corpoEmail;
+
     // Encontrar a linha que começa com 'Em' e termina com 'escreveu:'
     const regex = /Em[^\n]+escreveu:/;
-    const correspondencia = corpoEmail.match(regex);
+    const correspondencia = textoResposta.match(regex);
 
     if (correspondencia) {
-      // Extrair a linha e o conteúdo após ela
+      // Remover a linha e o conteúdo que vem depois dela
       const linhaCompleta = correspondencia[0];
-      const inicioLinha = corpoEmail.indexOf(linhaCompleta);
-      const conteudoRelevante = corpoEmail.substring(inicioLinha + linhaCompleta.length).trim();
+      const corpoSemLinha = textoResposta.replace(linhaCompleta, '').trim();
 
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE id = $1', [respostaID]);
@@ -85,13 +87,14 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
       if (denunciaExistente.rows.length > 0) {
         // Atualizar a tabela "denuncias" com a resposta
         const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE id = $2';
-        await client.query(updateQuery, [linhaCompleta + '\n' + conteudoRelevante, respostaID]);
+        await client.query(updateQuery, [corpoSemLinha, respostaID]);
       }
     }
   } catch (err) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
 }
+
 
 
 app.post('/inserirResposta', async (req, res) => {
