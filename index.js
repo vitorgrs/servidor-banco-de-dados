@@ -124,7 +124,7 @@ app.post('/inserirResposta', async (req, res) => {
      // Envio de e-mail
     const mailOptions = {
       from: 'eco.guardslz@gmail.com',
-      to: 'gamervitor28@gmail.com',
+      to: 'denunciasecoguard@gmail.com',
       subject: 'Denúncia realizada através do site ecoguard',
     text: `
         Denúncia realizada:
