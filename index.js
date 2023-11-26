@@ -200,7 +200,7 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     res.status(500).send('Erro interno do servidor');
   }
 });
-const instagramToken = 'IGQWRPMk5RWUZAlSVlrb0UzVDRlaktGRzE5d0ZAyVWxkamhEZAzFmT2lqSldGLUExdEVLUlA0SUdFX2pxRHhWSWk4WGMwb0FBVVlFb2lNdWpmNUVZAa3hQakI3cU81Nno0ZAW1LUHJDeG9oMWRwVlVqejVhSHpUVXBjYncZD';
+const instagramToken = 'IGQWRNLTFsb1d0djdOcmlPTVAwRHNzc3dMX3IwNzlCVXk4LWw4TmxocFJZAWDlCcjBONEJMY3NEcXVVUTJEMFgxWWtpSUNfa2l1TlVBOEVHODFXSnllX0UycXo5cGpNQ2xDWWtTMmQtYUpfYTdXYjBxaFhsNncyU0UZD';
 const twitterBearerToken = 'SEU_BEARER_TOKEN_DO_TWITTER';
 
 // Rota para obter dados do Instagram
