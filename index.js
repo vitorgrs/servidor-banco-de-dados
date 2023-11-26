@@ -12,6 +12,14 @@ app.use(cors());
 app.use(express.json()); 
 app.use(bodyParser.json());
 
+const corsOptions = {
+  origin: 'https://eco-guard.vercel.app/', // Substitua pelo domínio do seu site
+  methods: 'GET',
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
 const client = new Client({
     user: 'postgres',
     host: 'monorail.proxy.rlwy.net',
