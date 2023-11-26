@@ -2,7 +2,7 @@ const { Client } = require('pg');
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const path = require('path');
+const axios = require('axios');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const MailListener = require('mail-listener2');
@@ -199,6 +199,34 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     console.error('Erro ao obter denúncia do banco de dados:', error);
     res.status(500).send('Erro interno do servidor');
   }
+});
+const instagramToken = 'IGQWRPMk5RWUZAlSVlrb0UzVDRlaktGRzE5d0ZAyVWxkamhEZAzFmT2lqSldGLUExdEVLUlA0SUdFX2pxRHhWSWk4WGMwb0FBVVlFb2lNdWpmNUVZAa3hQakI3cU81Nno0ZAW1LUHJDeG9oMWRwVlVqejVhSHpUVXBjYncZD';
+const twitterBearerToken = 'SEU_BEARER_TOKEN_DO_TWITTER';
+
+// Rota para obter dados do Instagram
+app.get('/getInstagramFeed', async (req, res) => {
+    try {
+        const response = await axios.get(`https://graph.instagram.com/v12.0/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp&access_token=${instagramToken}`);
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erro ao obter dados do Instagram');
+    }
+});
+
+// Rota para obter dados do Twitter
+app.get('/getTwitterFeed', async (req, res) => {
+    try {
+        const response = await axios.get('https://api.twitter.com/2/tweets?tweet.fields=text,created_at&user.fields=profile_image_url,username', {
+            headers: {
+                Authorization: `Bearer ${twitterBearerToken}`,
+            },
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erro ao obter dados do Twitter');
+    }
 });
 
 const PORT = process.env.PORT || 3001;
