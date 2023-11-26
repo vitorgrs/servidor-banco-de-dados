@@ -219,14 +219,22 @@ app.get('/getInstagramFeed', async (req, res) => {
 app.get('/getTwitterFeed', async (req, res) => {
     try {
         const response = await axios.get('https://api.twitter.com/2/tweets/search/recent', {
-    headers: {
-        Authorization: `Bearer ${twitterBearerToken}`,
-    },
-    params: {
-        tweet.fields: 'text,created_at',
-        user.fields: 'profile_image_url,username',
-    },
+            headers: {
+                Authorization: `Bearer ${twitterBearerToken}`,
+            },
+            params: {
+                'tweet.fields': 'text,created_at',
+                'user.fields': 'profile_image_url,username',
+            },
+        });
+
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erro ao obter dados do Twitter');
+    }
 });
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
