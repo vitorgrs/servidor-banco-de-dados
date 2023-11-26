@@ -78,8 +78,8 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
 
     if (correspondencia) {
       // Remover a linha e o conteúdo que vem depois dela
-      const linhaCompleta = correspondencia[0];
-      const corpoSemLinha = textoResposta.replace(linhaCompleta, '').trim();
+      const inicioLinha = textoResposta.indexOf(correspondencia[0]);
+      const corpoSemLinha = textoResposta.substring(0, inicioLinha).trim();
 
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE id = $1', [respostaID]);
@@ -94,6 +94,7 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
 }
+
 
 
 
