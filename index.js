@@ -201,7 +201,7 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
   }
 });
 const instagramToken = 'IGQWRNLTFsb1d0djdOcmlPTVAwRHNzc3dMX3IwNzlCVXk4LWw4TmxocFJZAWDlCcjBONEJMY3NEcXVVUTJEMFgxWWtpSUNfa2l1TlVBOEVHODFXSnllX0UycXo5cGpNQ2xDWWtTMmQtYUpfYTdXYjBxaFhsNncyU0UZD';
-const twitterBearerToken = 'SEU_BEARER_TOKEN_DO_TWITTER';
+const twitterBearerToken = '1724780070454300672-N5f6aFmwVJqJsVLzvYjr0qLvek4SSD';
 
 // Rota para obter dados do Instagram
 app.get('/getInstagramFeed', async (req, res) => {
