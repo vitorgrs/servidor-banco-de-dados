@@ -31,6 +31,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SENHAAPPEMAIL, // Use a senha de aplicativo aqui
   },
 });
+
 const mailListener = new MailListener({
   username: process.env.EMAILORIGIN,
   password: process.env.SENHAAPPEMAIL,
@@ -43,6 +44,7 @@ const mailListener = new MailListener({
   fetchUnreadOnStart: true,
   mailParserOptions: { streamAttachments: true },
 });
+
 mailListener.start();
 
 mailListener.on('server:connected', () => {
@@ -102,13 +104,13 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
 app.post('/inserirResposta', async (req, res) => {
   const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
 
-  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';
+  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, protocolo, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';
   const values = [String(denuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos)];
 
 
   try {
     const result = await client.query(query, values);
-    const idDaDenuncia = result.rows[0].id;
+    const idDaDenuncia = result.rows[0].protocolo;
     const tipodenuncia = result.rows[0].tipo_de_denuncia;
     const data= result.rows[0].data_do_ocorrido;
     const ralato = result.rows[0].relato;
