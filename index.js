@@ -102,7 +102,7 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
 
 
 app.post('/inserirResposta', async (req, res) => {
-  const { denuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
+  const { tipodedenuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
 
   const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, protocolo, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';
   const values = [String(denuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos)];
