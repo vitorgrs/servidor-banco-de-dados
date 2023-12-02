@@ -84,6 +84,9 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
       // Remover a linha e o conteúdo que vem depois dela
       const inicioLinha = textoResposta.indexOf(correspondencia[0]);
       corpoSemLinha = textoResposta.substring(0, inicioLinha).trim();
+    }
+
+    console.log(corpoSemLinha);
 
 
 
