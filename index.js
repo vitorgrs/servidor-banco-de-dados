@@ -12,14 +12,14 @@ app.use(cors());
 app.use(express.json()); 
 app.use(bodyParser.json());
 
-
 const client = new Client({
-    user: 'postgres',
-    host: 'monorail.proxy.rlwy.net',
-    database: 'railway',
-    password: 'af--BC64gE-1A3gECdGEFgC5d6fgDfdE',
-    port: 59355,
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT,
 });
+
 
 client.connect().catch((eror) => console.log(eror))
 
