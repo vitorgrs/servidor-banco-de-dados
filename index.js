@@ -201,7 +201,7 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     res.status(500).send('Erro interno do servidor');
   }
 });
-const instagramToken = process.env.TOKENINSTAGRAM;
+const instagramToken = process.env.SENHAINSTAGRAM;
 
 // Rota para obter dados do Instagram
 app.get('/getInstagramFeed', async (req, res) => {
