@@ -69,36 +69,34 @@ mailListener.on('mail', (mail, seqno, attributes) => {
     console.error('ID da denúncia não encontrado no corpo do e-mail:', mail.text);
   }
 });
+function extrairCorpoEmail(email) {
+  // Divide o e-mail em linhas
+  const linhas = email.split('\n');
+
+  // Encontra o índice da linha que indica o início da resposta do e-mail
+  const indiceInicioResposta = linhas.findIndex((linha) => linha.includes('Em ') && linha.includes(' escreveu:'));
+
+  // Extrai o corpo do e-mail antes da resposta
+  const corpoSemLinha = linhas.slice(0, indiceInicioResposta).join('\n');
+
+  return corpoSemLinha;
+}
+
 
 async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
     // Armazenar todo o texto da resposta
-    const textoResposta = corpoEmail;
-    let corpoSemLinha = '';
+    const corpoSemLinha = extrairCorpoEmail(corpoEmail);
 
-    // Encontrar a linha que começa com 'Em' e termina com 'Denúncia realizada:'
-    const regex = /Em[^\n]*Denúncia realizada:/s;
-    const correspondencia = textoResposta.match(regex);
-
-    if (correspondencia) {
-      // Remover a linha e o conteúdo que vem depois dela
-      const inicioLinha = textoResposta.indexOf(correspondencia[0]);
-      corpoSemLinha = textoResposta.substring(0, inicioLinha).trim();
-  
-
-      console.log(corpoSemLinha);
-
-
-
-      // Verificar se já existe uma denúncia com o ID
+    // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE protocolo = $1', [respostaID]);
 
-      if (denunciaExistente.rows.length > 0) {
-        // Atualizar a tabela "denuncias" com a resposta
-        const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE protocolo = $2';
-        await client.query(updateQuery, [corpoSemLinha, respostaID]);
-      }
+    if (denunciaExistente.rows.length > 0) {
+      // Atualizar a tabela "denuncias" com a resposta
+      const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE protocolo = $2';
+      await client.query(updateQuery, [corpoSemLinha, respostaID]);
     }
+    
     console.log(corpoSemLinha);
   } catch (err) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
