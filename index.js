@@ -76,7 +76,7 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
     const textoResposta = corpoEmail;
 
     // Encontrar a linha que começa com 'Em' e termina com 'escreveu:'
-    const regex = /Em[^\n]+?Denúncia realizada:/;
+    const regex = /Em[^\n]*Denúncia realizada:/s;
     const correspondencia = textoResposta.match(regex);
 
     if (correspondencia) {
