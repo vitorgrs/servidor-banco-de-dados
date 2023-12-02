@@ -81,8 +81,7 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
 
     if (correspondencia) {
       // Remover a linha e o conteúdo que vem depois dela
-      const inicioLinha = textoResposta.indexOf(correspondencia[0]);
-      const corpoSemLinha = textoResposta.substring(0, inicioLinha).trim();
+      const corpoSemLinha = correspondencia[1].trim();
 
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE protocolo = $1', [respostaID]);
