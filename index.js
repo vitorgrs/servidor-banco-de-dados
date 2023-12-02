@@ -80,9 +80,9 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
     const correspondencia = textoResposta.match(regex);
 
     if (correspondencia) {
-      // Remover a linha e o conteúdo que vem depois dela
-      const inicioLinha = textoResposta.indexOf(correspondencia[0]);
-      const corpoSemLinha = textoResposta.substring(0, inicioLinha).trim();
+      // Dividir o texto com base na correspondência e pegar a primeira parte
+      const corpoSemLinha = textoResposta.split(correspondencia[0])[0].trim();
+    
 
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE protocolo = $1', [respostaID]);
