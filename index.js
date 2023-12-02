@@ -217,7 +217,7 @@ app.get('/getInstagramFeed', async (req, res) => {
 app.get('/tiposdenuncia', async (req, res) => {
   try {
    
-    const resultado = await client.query('SELECT tipodedenuncia FROM tipoeemail');
+    const resultado = await client.query('SELECT tipodedenuncia FROM tiposeemail');
 
     // Extrai os resultados da consulta
     const tiposDenuncia = resultado.rows.map(row => row.tipodedenuncia);
