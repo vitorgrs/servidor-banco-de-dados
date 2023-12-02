@@ -74,15 +74,18 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
     // Armazenar todo o texto da resposta
     const textoResposta = corpoEmail;
+    let corpoSemLinha = '';
 
-    // Encontrar a linha que começa com 'Em' e termina com 'escreveu:'
+    // Encontrar a linha que começa com 'Em' e termina com 'Denúncia realizada:'
     const regex = /Em[^\n]*Denúncia realizada:/s;
     const correspondencia = textoResposta.match(regex);
 
     if (correspondencia) {
       // Remover a linha e o conteúdo que vem depois dela
       const inicioLinha = textoResposta.indexOf(correspondencia[0]);
-      const corpoSemLinha = textoResposta.substring(0, inicioLinha).trim();
+      corpoSemLinha = textoResposta.substring(0, inicioLinha).trim();
+
+
 
       // Verificar se já existe uma denúncia com o ID
       const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE protocolo = $1', [respostaID]);
