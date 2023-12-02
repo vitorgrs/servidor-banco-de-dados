@@ -27,13 +27,13 @@ client.connect().catch((eror) => console.log(eror))
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'eco.guardslz@gmail.com',
-    pass: 'xovv ekaf cobv otgt', // Use a senha de aplicativo aqui
+    user: process.env.EMAILORIGIN,
+    pass: process.env.SENHAAPPEMAIL, // Use a senha de aplicativo aqui
   },
 });
 const mailListener = new MailListener({
-  username: 'eco.guardslz@gmail.com',
-  password: 'xovv ekaf cobv otgt',
+  username: process.env.EMAILORIGIN,
+  password: process.env.SENHAAPPEMAIL,
   host: 'imap.gmail.com',
   port: 993,
   tls: true,
@@ -123,7 +123,7 @@ app.post('/inserirResposta', async (req, res) => {
     
      // Envio de e-mail
     const mailOptions = {
-      from: 'eco.guardslz@gmail.com',
+      from: process.env.EMAILORIGIN,
       to: 'denunciasecoguard@gmail.com',
       subject: 'Denúncia realizada através do site ecoguard',
     text: `
@@ -153,7 +153,7 @@ app.post('/inserirResposta', async (req, res) => {
         <p>Contato: ${contatoInfo}</p>
       `,
       headers: {
-        'Message-ID': `<${idDaDenuncia}eco.guradslz@gmail.com>`, // Adicione o idDaDenuncia como um cabeçalho personalizado
+        'Message-ID': `<${idDaDenuncia}process.env.EMAILORIGIN>`, // Adicione o idDaDenuncia como um cabeçalho personalizado
       },    
     };
 
@@ -201,7 +201,7 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     res.status(500).send('Erro interno do servidor');
   }
 });
-const instagramToken = 'IGQWRNLTFsb1d0djdOcmlPTVAwRHNzc3dMX3IwNzlCVXk4LWw4TmxocFJZAWDlCcjBONEJMY3NEcXVVUTJEMFgxWWtpSUNfa2l1TlVBOEVHODFXSnllX0UycXo5cGpNQ2xDWWtTMmQtYUpfYTdXYjBxaFhsNncyU0UZD';
+const instagramToken = process.env.TOKENINSTAGRAM;
 
 // Rota para obter dados do Instagram
 app.get('/getInstagramFeed', async (req, res) => {
