@@ -99,6 +99,7 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
         await client.query(updateQuery, [corpoSemLinha, respostaID]);
       }
     }
+    console.log(corpoSemLinha);
   } catch (err) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
