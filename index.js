@@ -214,7 +214,21 @@ app.get('/getInstagramFeed', async (req, res) => {
     }
 });
 
+app.get('/tiposdenuncia', async (req, res) => {
+  try {
+   
+    const resultado = await pool.query('SELECT tipodedenuncia FROM tipoeemail');
 
+    // Extrai os resultados da consulta
+    const tiposDenuncia = resultado.rows.map(row => row.tipodedenuncia);
+
+    // Responde com os tipos de denúncia em formato JSON
+    res.json(tiposDenuncia);
+  } catch (error) {
+    console.error('Erro na consulta SQL:', error);
+    res.status(500).send('Erro interno do servidor');
+  }
+});
 
 
 const PORT = process.env.PORT || 3001;
