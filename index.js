@@ -105,7 +105,7 @@ async function obterEAtualizarStatus(protocolo) {
       } else if (statusAtual === 'Em Análise - Denúncia está Sendo Apurada') {
         novoStatusAtualizado = 'Resolvida';
       } else {
-        novoStatusAtualizado = 'Enviado - Aguardando Avaliação'; 
+        novoStatusAtualizado = 'Enviada - Aguardando Avaliação'; 
       }
 
       // Atualizar o status na tabela denuncias
