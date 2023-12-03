@@ -65,7 +65,6 @@ mailListener.on('mail', (mail, seqno, attributes) => {
   if (idDaDenuncia) {
     // Lógica para lidar com a resposta usando o ID da denúncia
     inserirRespostaNoBanco(idDaDenuncia, mail.text);
-    console.log(mail.text);
   } else {
     console.error('ID da denúncia não encontrado no corpo do e-mail:', mail.text);
   }
