@@ -95,11 +95,11 @@ async function obterEAtualizarStatus(protocolo) {
     const resultadoConsulta = await client.query(consultaStatusQuery, [protocolo]);
 
     if (resultadoConsulta.rows.length > 0) {
-      const statusAtual = resultadoConsulta.rows[0].status;
+      const statusAtual = resultadoConsulta.rows[0].status.trim();
 
       // Atualizar o status com base na lógica fornecida
       let novoStatusAtualizado;
-      if (statusAtual === 'Enviada - Aguardando Avaliação') {
+      if (statusAtual === 'Enviada - Aguardando Avaliação                                                                      ') {
         novoStatusAtualizado = 'Em Análise - Denúncia está Sendo Apurada';
       } else if (statusAtual === 'Em Análise - Denúncia está Sendo Apurada') {
         novoStatusAtualizado = 'Resolvida';
