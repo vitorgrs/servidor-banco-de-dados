@@ -96,6 +96,7 @@ async function obterEAtualizarStatus(protocolo) {
 
     if (resultadoConsulta.rows.length > 0) {
       const statusAtual = resultadoConsulta.rows[0].status.trim();
+       console.log(statusAtual);
 
       // Atualizar o status com base na lógica fornecida
       let novoStatusAtualizado;
