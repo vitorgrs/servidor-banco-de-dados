@@ -88,18 +88,48 @@ function extrairCorpoEmail(email) {
   return corpoSemLinha;
 }
 
+async function obterEAtualizarStatus(protocolo) {
+  try {
+    // Consultar o valor atual da coluna status com base no protocolo
+    const consultaStatusQuery = 'SELECT status FROM denuncias WHERE protocolo = $1';
+    const resultadoConsulta = await client.query(consultaStatusQuery, [protocolo]);
+
+    if (resultadoConsulta.rows.length > 0) {
+      const statusAtual = resultadoConsulta.rows[0].status;
+
+      // Atualizar o status com base na lógica fornecida
+      let novoStatusAtualizado;
+      if (statusAtual === 'Enviada - Aguardando Avaliação') {
+        novoStatusAtualizado = 'Em Análise - Denúncia está Sendo Apurada';
+      } else if (statusAtual === 'Em Análise - Denúncia está Sendo Apurada') {
+        novoStatusAtualizado = 'Resolvida';
+      } else {
+        novoStatusAtualizado = statusAtual; 
+      }
+
+      // Atualizar o status na tabela denuncias
+      const updateStatusQuery = 'UPDATE denuncias SET status = $1 WHERE protocolo = $2';
+      await client.query(updateStatusQuery, [novoStatusAtualizado, protocolo]);
+    } else {
+      console.error('Denúncia não encontrada para o protocolo:', protocolo);
+    }
+  } catch (err) {
+    console.error('Erro ao obter ou atualizar status:', err);
+  }
+}
+
 async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
-    // Armazenar todo o texto da resposta
     const corpoSemLinha = extrairCorpoEmail(corpoEmail);
-
     // Verificar se já existe uma denúncia com o ID
     const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE protocolo = $1', [respostaID]);
 
     if (denunciaExistente.rows.length > 0) {
-      // Atualizar a tabela "denuncias" com a resposta e definir o status como "Resolvida com Feedback"
-      const updateQuery = 'UPDATE denuncias SET respostaemail = $1, status = $2 WHERE protocolo = $3';
-      await client.query(updateQuery, [corpoSemLinha, 'Resolvida com Feedback', respostaID]);
+      const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE protocolo = $2';
+      await client.query(updateQuery, [corpoSemLinha, respostaID]);
+
+      // Chamar a função para obter e atualizar o status
+      await obterEAtualizarStatus(respostaID);
     }
 
     console.log(corpoSemLinha);
@@ -107,10 +137,6 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
     console.error('Erro ao inserir resposta no banco de dados:', err);
   }
 }
-
-
-
-
 
 app.post('/inserirResposta', async (req, res) => {
   const { tipodedenuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
