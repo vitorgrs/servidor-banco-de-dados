@@ -140,17 +140,16 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
 }
 
 app.post('/inserirResposta', async (req, res) => {
-  const { tipodedenuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos } = req.body;
+  const { tipodedenuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos, email } = req.body;
 
-  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, protocolo, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';
-  const values = [String(tipodedenuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos)];
+  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, protocolo, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato, email';
+  const values = [String(tipodedenuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos), String(email)];
   
   const tipoDenunciaQuery = 'SELECT email FROM tiposeemail WHERE tipodedenuncia = $1';
   const tipoDenunciaValues = [String(tipodedenuncia)];
 
   try {
       
-
     const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].protocolo;
     const tipodenuncia = result.rows[0].tipo_de_denuncia;
@@ -163,6 +162,8 @@ app.post('/inserirResposta', async (req, res) => {
     const descricao = result.rows[0].descricao_do_local;
     const contato = result.rows[0].contato;
     const contatoInfo = contato && contato.trim() !== '' ? contato : 'Sem informações de contato';
+    const email= result.rows[0].email;
+    const emailInfo = email && email.trim() !== '' ? email : 'Sem informações de email';
 
     const tipoDenunciaResult = await client.query(tipoDenunciaQuery, tipoDenunciaValues);
     const emailDoTipoDenuncia = tipoDenunciaResult.rows[0].email;
@@ -184,6 +185,7 @@ app.post('/inserirResposta', async (req, res) => {
         Bairro: ${bairro}
         Descrição do local: ${descricao}
         Contato: ${contatoInfo}
+        Email: ${emailInfo}
       `,
       html: `
         <p>Denúncia realizada:</p>
@@ -197,6 +199,7 @@ app.post('/inserirResposta', async (req, res) => {
         <p>Bairro: ${bairro}</p>
         <p>Descrição do local: ${descricao.replace(/\n/g, '<br>')}</p>
         <p>Contato: ${contatoInfo}</p>
+        <p>Email: ${emailInfo}</p>
       `,
       headers: {
         'Message-ID': `<${idDaDenuncia}process.env.EMAILORIGIN>`, // Adicione o idDaDenuncia como um cabeçalho personalizado
@@ -213,8 +216,6 @@ app.post('/inserirResposta', async (req, res) => {
       }
       
     });
-
-
 
     console.log('Resposta inserida com sucesso. ID da denúncia:', idDaDenuncia);
     res.status(200).json({ id: idDaDenuncia });
