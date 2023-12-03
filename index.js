@@ -118,7 +118,7 @@ app.post('/inserirResposta', async (req, res) => {
   const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, protocolo, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';
   const values = [String(tipodedenuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos)];
   
-  const tipoDenunciaQuery = 'SELECT email FROM tiposemail WHERE tipodedenuncia = $1';
+  const tipoDenunciaQuery = 'SELECT email FROM tiposeemail WHERE tipodedenuncia = $1';
   const tipoDenunciaValues = [String(tipodedenuncia)];
 
   try {
