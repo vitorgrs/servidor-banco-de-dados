@@ -117,9 +117,13 @@ app.post('/inserirResposta', async (req, res) => {
 
   const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id, protocolo, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato';
   const values = [String(tipodedenuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos)];
-
+  
+  const tipoDenunciaQuery = 'SELECT email FROM tiposemail WHERE tipodedenuncia = $1';
+  const tipoDenunciaValues = [String(tipodedenuncia)];
 
   try {
+      
+
     const result = await client.query(query, values);
     const idDaDenuncia = result.rows[0].protocolo;
     const tipodenuncia = result.rows[0].tipo_de_denuncia;
@@ -133,11 +137,13 @@ app.post('/inserirResposta', async (req, res) => {
     const contato = result.rows[0].contato;
     const contatoInfo = contato && contato.trim() !== '' ? contato : 'Sem informações de contato';
 
+    const tipoDenunciaResult = await client.query(tipoDenunciaQuery, tipoDenunciaValues);
+    const emailDoTipoDenuncia = tipoDenunciaResult.rows[0].email;
     
      // Envio de e-mail
     const mailOptions = {
       from: process.env.EMAILORIGIN,
-      to: 'denunciasecoguard@gmail.com',
+      to: emailDoTipoDenuncia,
       subject: 'Denúncia realizada através do site ecoguard',
     text: `
         Denúncia realizada:
