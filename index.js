@@ -100,7 +100,7 @@ async function obterEAtualizarStatus(protocolo) {
 
       // Atualizar o status com base na lógica fornecida
       let novoStatusAtualizado;
-      if (statusAtual === 'Enviada - Aguardando Avaliação                                                                      ') {
+      if (statusAtual === 'Enviada - Aguardando Avaliação') {
         novoStatusAtualizado = 'Em Análise - Denúncia está Sendo Apurada';
       } else if (statusAtual === 'Em Análise - Denúncia está Sendo Apurada') {
         novoStatusAtualizado = 'Resolvida';
