@@ -75,9 +75,9 @@ function extrairCorpoEmail(email) {
   const linhas = email.split('\n');
 
   // Encontra o índice da linha que indica o início da resposta do e-mail
-  let indiceInicioResposta = linhas.findIndex((linha) => (linha.includes('Em ') && linha.includes('EcoGuard')));
+  let indiceInicioResposta = linhas.findIndex((linha) => (linha.includes('Em ') && linha.includes('Eco Guard')));
   if (indiceInicioResposta === -1) {
-    indiceInicioResposta = linhas.findIndex((linha) => linha.includes('Em ') && linha.includes('Eco Guard'));
+    indiceInicioResposta = linhas.findIndex((linha) => linha.includes('Em ') && linha.includes('EcoGuard'));
   // Se não encontrar, tenta outra condição
     if (indiceInicioResposta === -1) {
       indiceInicioResposta = linhas.findIndex((linha) => linha.includes('Em ') && linha.includes('eco.guardslz@gmail.com'));
