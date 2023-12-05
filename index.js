@@ -162,20 +162,21 @@ app.post('/inserirResposta', async (req, res) => {
    
    const inserirdenuncia = 'INSERT INTO denuncias(id_crime_ambiental, id_endereco, id_contato, data_do_ocorrido, relato) VALUES ($1, $2, $3, $4, $5) RETURNING protocolo';
    const valoresdenuncia = [(resultadocrimeambiental.rows[0].id_crime_ambiental), (resultadoendereco.rows[0].id_endereco), (resultadocontato.rows[0].id_contato), String(data), String(relato)];
-
       
     const resultadoDenuncia = await client.query(inserirdenuncia, valoresdenuncia);
     const idDaDenuncia = resultadoDenuncia.rows[0].protocolo;
     const contatoInfo = contatos && contatos.trim() !== '' ? contatos : 'Sem informações de contato';
     const emailInfo = email && email.trim() !== '' ? email : 'Sem informações de email';
-
-    /*const tipoDenunciaResult = await client.query(tipoDenunciaQuery, tipoDenunciaValues);
-    const emailDoTipoDenuncia = tipoDenunciaResult.rows[0].email;*/
+        
+    const pesquisanomecrimesambientais= 'SELECT email_orgao.email_orgao FROM denuncias JOIN crimes_ambientais ON denuncias.id_crime_ambiental = crimes_ambientais.id_crime_ambiental JOIN email_orgao ON crimes_ambientais.id_email_orgao = email_orgao.id_email_orgao WHERE denuncias.protocolo = $1';
+    
+    const Resultadoemailorgao = await client.query(pesquisanomecrimesambientais, idDaDenuncia);
+    const emailDoOrgao = Resultadoemailorgao.rows[0].email_orgao;
     
      // Envio de e-mail
     const mailOptions = {
       from: process.env.EMAILORIGIN,
-      to: 'denunciasecoguard@gmail.com',
+      to: emailDoOrgao,
       subject: 'Denúncia realizada através do site ecoguard',
     text: `
         Denúncia realizada:
