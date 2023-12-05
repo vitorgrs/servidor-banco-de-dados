@@ -140,30 +140,34 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   }
 }
 
+
+
 app.post('/inserirResposta', async (req, res) => {
   const { tipodedenuncia, data, relato, logradouro, complemento, cidade, bairro, descricaoLocal, contatos, email } = req.body;
-
-  const query = 'INSERT INTO denuncias(tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, protocolo, tipo_de_denuncia, data_do_ocorrido, relato, logradouro, complemento, cidade, bairro, descricao_do_local, contato, email';
-  const values = [String(tipodedenuncia), String(data), String(relato), String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal), String(contatos), String(email)];
   
-  const tipoDenunciaQuery = 'SELECT email FROM tiposeemail WHERE tipodedenuncia = $1';
-  const tipoDenunciaValues = [String(tipodedenuncia)];
+  const inserircontato = 'INSERT INTO contato(email, contato_email) VALUES ($1, $2) RETURNING id_contato';
+  const valorescontato = [String(email), String(contatos)];
+
+  const inserirenedereco = 'INSERT INTO endereco(logradouro, complemento, cidade, bairro, descricao_local) VALUES ($1, $2, $3, $4, $5) RETURNING id_endereco';
+  const valoresendereco = [String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal)];
+
+  
 
   try {
+    const resultadocontato = await client.query(inserircontato, valorescontato);
+    const resultadoendereco = await client.query(inserirenedereco, valoresendereco);
+    
+    const pesquisacrimeambiental = 'SELECT id_crimes_ambiental FROM crimes_ambientais WHERE nome_crimes_ambientais = $1';
+    const valorcrimeambiental = String[tipodedenuncia];
+    const resultadocrimeambiental = await client.query(pesquisacrimeambiental, valorcrimeambiental);
+  
+   const inserirdenuncia = 'INSERT INTO denuncias(id_crime_ambiental, id_endereco, id_contato, data_do_ocorrido, relato) VALUES ($1, $2, $3, $4, $5) RETURNING protocolo';
+   const valoresdenuncia = [(resultadocrimeambiental.rows[0].id_crimes_ambiental), (resultadoendereco.rows[0].id_endereco), (resultadocontato.rows[0].id_contato), String(data), String(relato)];
+
       
-    const result = await client.query(query, values);
-    const idDaDenuncia = result.rows[0].protocolo;
-    const tipodenuncia = result.rows[0].tipo_de_denuncia;
-    const data= result.rows[0].data_do_ocorrido;
-    const ralato = result.rows[0].relato;
-    const logradouro =result.rows[0].logradouro;
-    const complemento= result.rows[0].complemento;
-    const cidade = result.rows[0].cidade;
-    const bairro = result.rows[0].bairro;
-    const descricao = result.rows[0].descricao_do_local;
-    const contato = result.rows[0].contato;
-    const contatoInfo = contato && contato.trim() !== '' ? contato : 'Sem informações de contato';
-    const email= result.rows[0].email;
+    const resultadoDenuncia = await client.query(inserirdenuncia, valoresdenuncia);
+    const idDaDenuncia = resultadoDenuncia.rows[0].protocolo;
+    const contatoInfo = contatos && contatos.trim() !== '' ? contatos : 'Sem informações de contato';
     const emailInfo = email && email.trim() !== '' ? email : 'Sem informações de email';
 
     const tipoDenunciaResult = await client.query(tipoDenunciaQuery, tipoDenunciaValues);
@@ -177,28 +181,28 @@ app.post('/inserirResposta', async (req, res) => {
     text: `
         Denúncia realizada:
         Protocolo: ${idDaDenuncia}
-        Sobre: ${tipodenuncia}
+        Sobre: ${tipodedenuncia}
         Data do ocorrido: ${data}
         Relato: ${relato}
         Logradouro: ${logradouro}
         Complemento: ${complemento}
         Cidade: ${cidade}
         Bairro: ${bairro}
-        Descrição do local: ${descricao}
+        Descrição do local: ${descricaoLocal}
         Contato: ${contatoInfo}
         Email: ${emailInfo}
       `,
       html: `
         <p>Denúncia realizada:</p>
         <p>Protocolo: ${idDaDenuncia}</p>
-        <p>Sobre: ${tipodenuncia}</p>
+        <p>Sobre: ${tipodedenuncia}</p>
         <p>Data do ocorrido: ${data}</p>
         <p>Relato: ${relato.replace(/\n/g, '<br>')}</p>
         <p>Logradouro: ${logradouro}</p>
         <p>Complemento: ${complemento}</p>
         <p>Cidade: ${cidade}</p>
         <p>Bairro: ${bairro}</p>
-        <p>Descrição do local: ${descricao.replace(/\n/g, '<br>')}</p>
+        <p>Descrição do local: ${descricaoLocal.replace(/\n/g, '<br>')}</p>
         <p>Contato: ${contatoInfo}</p>
         <p>Email: ${emailInfo}</p>
       `,
@@ -227,17 +231,15 @@ app.post('/inserirResposta', async (req, res) => {
   }
 });
 
+
 app.get('/obterDenuncia/:protocolo', async (req, res) => {
   const protocolo = req.params.protocolo;
-  /*
-  if (!protocolo) {
-    res.status(400).send('Protocolo não fornecido');
-    return;
-  }*/
+
+
 
   try {
-    const result = await client.query('SELECT * FROM denuncias WHERE protocolo = $1', [protocolo]);
-
+    const result = await client.query('SELECT crimes_ambientais.nome_crimes_ambientais, contato.email, contato.contato_celular, endereco.logradouro, endereco.cidade, endereco.complemento, endereco.bairro, endereco.descricao_do_local, denuncias.status, denuncias.respostaemail, denuncias.relato, denuncias.data_do_ocorrido, denuncias.protocolo FROM denuncias JOIN crimes_ambientais ON denuncias.id_crime_ambiental = crimes_ambientais.id_crime_ambiental JOIN contato ON denuncias.id_contato = contato.id_contato JOIN endereco ON denuncias.id_endereco = endereco.id_endereco WHERE denuncias.protocolo = $1', [protocolo]);
+    
     if (result.rows.length > 0) {
       const denuncia = result.rows[0];
       res.status(200).json(denuncia);
@@ -249,6 +251,8 @@ app.get('/obterDenuncia/:protocolo', async (req, res) => {
     res.status(500).send('Erro interno do servidor');
   }
 });
+
+
 const instagramToken = process.env.SENHAINSTAGRAM;
 
 // Rota para obter dados do Instagram
@@ -265,7 +269,7 @@ app.get('/getInstagramFeed', async (req, res) => {
 app.get('/tiposdenuncia', async (req, res) => {
   try {
    
-    const resultado = await client.query('SELECT tipodedenuncia FROM tiposeemail');
+    const resultado = await client.query('SELECT nome_crimes_ambentais FROM crime_ambientais');
 
     // Extrai os resultados da consulta
     const tiposDenuncia = resultado.rows.map(row => row.tipodedenuncia);
