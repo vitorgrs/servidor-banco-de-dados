@@ -152,7 +152,6 @@ app.post('/inserirResposta', async (req, res) => {
   const valoresendereco = [String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal)];
 
   
-
   try {
     const resultadocontato = await client.query(inserircontato, valorescontato);
     const resultadoendereco = await client.query(inserirenedereco, valoresendereco);
