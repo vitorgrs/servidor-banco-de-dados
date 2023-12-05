@@ -148,7 +148,7 @@ app.post('/inserirResposta', async (req, res) => {
   const inserircontato = 'INSERT INTO contato(email, contato_celular) VALUES ($1, $2) RETURNING id_contato';
   const valorescontato = [String(email), String(contatos)];
 
-  const inserirenedereco = 'INSERT INTO endereco(logradouro, complemento, cidade, bairro, descricao_local) VALUES ($1, $2, $3, $4, $5) RETURNING id_endereco';
+  const inserirenedereco = 'INSERT INTO endereco(logradouro, complemento, cidade, bairro, descricao_do_local) VALUES ($1, $2, $3, $4, $5) RETURNING id_endereco';
   const valoresendereco = [String(logradouro), String(complemento), String(cidade), String(bairro), String(descricaoLocal)];
 
   
