@@ -272,10 +272,10 @@ app.get('/tiposdenuncia', async (req, res) => {
     const resultado = await client.query('SELECT nome_crimes_ambientais FROM crimes_ambientais');
 
     // Extrai os resultados da consulta
-    const tiposDenuncia = resultado.rows.map(row => row.tipodedenuncia);
+    const nome_crimes_ambientais = resultado.rows.map(row => row.nome_crimes_ambientais);
 
     // Responde com os tipos de denúncia em formato JSON
-    res.json(tiposDenuncia);
+    res.json(nome_crimes_ambientais);
   } catch (error) {
     console.error('Erro na consulta SQL:', error);
     res.status(500).send('Erro interno do servidor');
