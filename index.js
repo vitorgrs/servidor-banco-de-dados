@@ -124,7 +124,7 @@ async function inserirRespostaNoBanco(respostaID, corpoEmail) {
   try {
     const corpoSemLinha = extrairCorpoEmail(corpoEmail);
     // Verificar se já existe uma denúncia com o ID
-    const denunciaExistente = await client.query('SELECT id FROM denuncias WHERE protocolo = $1', [respostaID]);
+    const denunciaExistente = await client.query('SELECT id_denuncia FROM denuncias WHERE protocolo = $1', [respostaID]);
 
     if (denunciaExistente.rows.length > 0) {
       const updateQuery = 'UPDATE denuncias SET respostaemail = $1 WHERE protocolo = $2';
