@@ -157,12 +157,12 @@ app.post('/inserirResposta', async (req, res) => {
     const resultadocontato = await client.query(inserircontato, valorescontato);
     const resultadoendereco = await client.query(inserirenedereco, valoresendereco);
     
-    const pesquisacrimeambiental = 'SELECT id_crimes_ambiental FROM crimes_ambientais WHERE nome_crimes_ambientais = $1';
+    const pesquisacrimeambiental = 'SELECT id_crime_ambiental FROM crimes_ambientais WHERE nome_crimes_ambientais = $1';
     const valorcrimeambiental = String[tipodedenuncia];
     const resultadocrimeambiental = await client.query(pesquisacrimeambiental, valorcrimeambiental);
   
    const inserirdenuncia = 'INSERT INTO denuncias(id_crime_ambiental, id_endereco, id_contato, data_do_ocorrido, relato) VALUES ($1, $2, $3, $4, $5) RETURNING protocolo';
-   const valoresdenuncia = [(resultadocrimeambiental.rows[0].id_crimes_ambiental), (resultadoendereco.rows[0].id_endereco), (resultadocontato.rows[0].id_contato), String(data), String(relato)];
+   const valoresdenuncia = [(resultadocrimeambiental.rows[0].id_crime_ambiental), (resultadoendereco.rows[0].id_endereco), (resultadocontato.rows[0].id_contato), String(data), String(relato)];
 
       
     const resultadoDenuncia = await client.query(inserirdenuncia, valoresdenuncia);
