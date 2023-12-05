@@ -169,13 +169,13 @@ app.post('/inserirResposta', async (req, res) => {
     const contatoInfo = contatos && contatos.trim() !== '' ? contatos : 'Sem informações de contato';
     const emailInfo = email && email.trim() !== '' ? email : 'Sem informações de email';
 
-    const tipoDenunciaResult = await client.query(tipoDenunciaQuery, tipoDenunciaValues);
-    const emailDoTipoDenuncia = tipoDenunciaResult.rows[0].email;
+    /*const tipoDenunciaResult = await client.query(tipoDenunciaQuery, tipoDenunciaValues);
+    const emailDoTipoDenuncia = tipoDenunciaResult.rows[0].email;*/
     
      // Envio de e-mail
     const mailOptions = {
       from: process.env.EMAILORIGIN,
-      to: emailDoTipoDenuncia,
+      to: 'denunciasecoguard@gmail.com',
       subject: 'Denúncia realizada através do site ecoguard',
     text: `
         Denúncia realizada:
