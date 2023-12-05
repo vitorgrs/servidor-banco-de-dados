@@ -169,8 +169,8 @@ app.post('/inserirResposta', async (req, res) => {
     const emailInfo = email && email.trim() !== '' ? email : 'Sem informações de email';
         
     const pesquisanomecrimesambientais= 'SELECT email_orgao.email_orgao FROM denuncias JOIN crimes_ambientais ON denuncias.id_crime_ambiental = crimes_ambientais.id_crime_ambiental JOIN email_orgao ON crimes_ambientais.id_email_orgao = email_orgao.id_email_orgao WHERE denuncias.protocolo = $1';
-    
-    const Resultadoemailorgao = await client.query(pesquisanomecrimesambientais, idDaDenuncia);
+    const valoresnomecrimesambientais = [idDaDenuncia];
+    const Resultadoemailorgao = await client.query(pesquisanomecrimesambientais, valoresnomecrimesambientais);
     const emailDoOrgao = Resultadoemailorgao.rows[0].email_orgao;
     
      // Envio de e-mail
