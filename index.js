@@ -58,7 +58,7 @@ mailListener.on('server:disconnected', () => {
 mailListener.on('mail', (mail, seqno, attributes) => {
   console.log('Novo e-mail recebido:', mail.subject);
 
-  // Extrair o ID da denúncia do corpo do e-mail (ajuste conforme necessário)
+  
   const idDaDenunciaMatch = mail.text.match(/Protocolo: (\d+)/);
   const idDaDenuncia = idDaDenunciaMatch ? parseInt(idDaDenunciaMatch[1]) : null;
 
